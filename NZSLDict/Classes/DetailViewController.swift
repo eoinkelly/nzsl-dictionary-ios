@@ -14,7 +14,7 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
 
     var currentEntry: DictEntry!
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailViewController.showEntry(_:)), name: EntrySelectedName, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "playerPlaybackStateDidChange:", name: MPMoviePlayerPlaybackStateDidChangeNotification, object: player)
@@ -32,8 +32,8 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
     }
 
     override func loadView() {
-        let view: UIView = UIView(frame: UIScreen.mainScreen().bounds)
-        view.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        let view: UIView = UIView(frame: UIScreen.main.bounds)
+        view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
         let top_offset: CGFloat = 20
 
@@ -44,7 +44,7 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
         navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         navigationBar.delegate = self
         view.addSubview(navigationBar)
-        
+
         navigationTitle = UINavigationItem(title: "NZSL Dictionary")
         navigationBar.setItems([navigationTitle], animated: false)
 
@@ -52,9 +52,9 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
         diagramView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight, .FlexibleBottomMargin]
         view.addSubview(diagramView)
 
-        videoView = UIView(frame: CGRectMake(0, top_offset + 44 + view.bounds.size.height / 2, view.bounds.size.width, view.bounds.size.height - (top_offset + 44 + view.bounds.size.height / 2)))
-        videoView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight, .FlexibleTopMargin]
-        videoView.backgroundColor = UIColor.blackColor()
+        videoView = UIView(frame: CGRect(x: 0, y: top_offset + 44 + view.bounds.size.height / 2, width: view.bounds.size.width, height: view.bounds.size.height - (top_offset + 44 + view.bounds.size.height / 2)))
+        videoView.autoresizingMask = [.flexibleWidth, .flexibleHeight, .flexibleTopMargin]
+        videoView.backgroundColor = UIColor.black
         view.addSubview(videoView)
 
         playButton = UIButton(type: .RoundedRect)
@@ -64,12 +64,12 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
         playButton.setTitle("Play Video", forState: .Normal)
         playButton.setTitle("Playing videos requires access to the Internet.", forState: .Disabled)
         playButton.setTitleColor(UIColor.whiteColor(), forState: .Disabled)
-        
+
         playButton.addTarget(self, action: "startPlayer:", forControlEvents: .TouchUpInside)
         videoView.addSubview(playButton)
-        
+
         setupNetworkStatusMonitoring()
-        
+
         self.view = view
     }
 
@@ -82,12 +82,12 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
         player.view!.frame = videoView.frame
     }
 
-    func splitViewController(svc: UISplitViewController, shouldHideViewController vc: UIViewController, inOrientation orientation: UIInterfaceOrientation) -> Bool {
+    func splitViewController(_ svc: UISplitViewController, shouldHide vc: UIViewController, in orientation: UIInterfaceOrientation) -> Bool {
         return false
     }
 
-    func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
-        return .TopAttached
+    func position(for bar: UIBarPositioning) -> UIBarPosition {
+        return .topAttached
     }
 
     func showEntry(notification: NSNotification) {
@@ -97,10 +97,10 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
         player?.view!.removeFromSuperview()
         player = nil
     }
-    
+
     func setupNetworkStatusMonitoring() {
         reachability = Reachability.reachabilityForInternetConnection()
-        
+
         reachability!.reachableBlock = { (reach: Reachability?) -> Void in
             // this is called on a background thread, but UI updates must
             // be on the main thread, like this:
@@ -108,7 +108,7 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
                 self.playButton.enabled = true
             }
         }
-        
+
         reachability!.unreachableBlock = { (reach: Reachability?) -> Void in
             // this is called on a background thread, but UI updates must
             // be on the main thread, like this:
@@ -116,26 +116,26 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
                 self.playButton.enabled = false
             }
         }
-        
+
         self.playButton.enabled = reachability?.currentReachabilityStatus() != .NotReachable
-        
+
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.reachability!.startNotifier()
     }
 
-    @IBAction func startPlayer(sender: AnyObject) {
-        player = MPMoviePlayerController(contentURL: NSURL(string: currentEntry.video)!)
+    @IBAction func startPlayer(_ sender: AnyObject) {
+        player = MPMoviePlayerController(contentURL: URL(string: currentEntry.video)!)
         player.prepareToPlay()
         player.view!.frame = videoView.bounds
         videoView.addSubview(player.view!)
         player.play()
 
-        activity = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+        activity = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
         videoView.addSubview(activity)
-        activity.frame = CGRectOffset(activity.frame, (CGRectGetWidth(videoView.bounds) - CGRectGetWidth(activity.bounds)) / 2, (CGRectGetHeight(videoView.bounds) - CGRectGetHeight(activity.bounds)) / 2)
+        activity.frame = activity.frame.offsetBy(dx: (videoView.bounds.width - activity.bounds.width) / 2, dy: (videoView.bounds.height - activity.bounds.height) / 2)
         activity.startAnimating()
     }
 
@@ -148,10 +148,9 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
     func playerPlaybackDidFinish(notification: NSNotification) {
         let reason = notification.userInfo![MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] as? MPMovieFinishReason
 
-        if reason == .PlaybackError {
+        if reason == .playbackError {
             let alert: UIAlertView = UIAlertView(title: "Network access required", message: "Playing videos requires access to the Internet.", delegate: nil, cancelButtonTitle: "Cancel", otherButtonTitles: "")
             alert.show()
         }
     }
-
 }

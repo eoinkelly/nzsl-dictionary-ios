@@ -11,10 +11,10 @@ class VideoViewController: UIViewController, UISearchBarDelegate {
     var delegate: ViewControllerDelegate!
     var reachability: Reachability?
 
-    override init(nibName nibNameOrNil: String!, bundle nibBundleOrNil: NSBundle!) {
+    override init(nibName nibNameOrNil: String!, bundle nibBundleOrNil: Bundle!) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         self.tabBarItem = UITabBarItem(title: "Video", image: UIImage(named: "movie"), tag: 0)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "showEntry:", name: EntrySelectedName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoViewController.showEntry(_:)), name: NSNotification.Name(rawValue: EntrySelectedName), object: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -28,33 +28,33 @@ class VideoViewController: UIViewController, UISearchBarDelegate {
     }
 
     override func loadView() {
-        let view: UIView = UIView(frame: UIScreen.mainScreen().bounds)
-        view.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        let view: UIView = UIView(frame: UIScreen.main.bounds)
+        view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
         detailView = DetailView(frame: CGRectMake(0, 0, view.bounds.size.width, DetailView.height))
         detailView.autoresizingMask = [.FlexibleWidth]
         view.addSubview(detailView)
-        videoBack = UIView(frame: CGRectMake(0, DetailView.height, view.bounds.size.width, view.bounds.size.height - DetailView.height))
-        videoBack.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        videoBack = UIView(frame: CGRect(x: 0, y: DetailView.height, width: view.bounds.size.width, height: view.bounds.size.height - DetailView.height))
+        videoBack.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(videoBack)
-        
+
         networkErrorMessage = UIView.init(frame: videoBack.frame)
         networkErrorMessage.autoresizingMask = detailView.autoresizingMask
         networkErrorMessage.backgroundColor = UIColor.whiteColor()
         let networkErrorMessageImage = UIImageView.init(frame: CGRectMake(0, 24, networkErrorMessage.frame.width, 72))
         networkErrorMessageImage.image = UIImage.init(named: "ic_videocam_off")
         networkErrorMessageImage.contentMode = .Center
-        
+
         let networkErrorMessageText = UITextView.init(frame: CGRectMake(0, 24 + networkErrorMessageImage.frame.height, networkErrorMessage.frame.width, 100))
         networkErrorMessageText.textAlignment = .Center
         networkErrorMessageText.text = "Playing videos requires access to the Internet."
-        
+
         networkErrorMessage.addSubview(networkErrorMessageImage)
         networkErrorMessage.addSubview(networkErrorMessageText)
         networkErrorMessage.autoresizesSubviews = true
         view.addSubview(networkErrorMessage)
-        
-        
+
+
         setupNetworkStatusMonitoring()
 
         self.view = view
@@ -62,34 +62,34 @@ class VideoViewController: UIViewController, UISearchBarDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        if self.respondsToSelector("edgesForExtendedLayout") {
-            self.edgesForExtendedLayout = .None
+        if self.responds(to: #selector(getter: UIViewController.edgesForExtendedLayout)) {
+            self.edgesForExtendedLayout = UIRectEdge()
         }
-        
+
 
        reachability!.startNotifier()
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.showCurrentEntry()
-        
+
     }
-    
+
     func setupNetworkStatusMonitoring() {
         reachability = Reachability.reachabilityForInternetConnection()
-            
-        
+
+
         reachability!.reachableBlock = { (reach: Reachability?) -> Void in
             // this is called on a background thread, but UI updates must
             // be on the main thread, like this:
             dispatch_async(dispatch_get_main_queue()) {
                 self.networkErrorMessage.hidden = true
                 self.videoBack.hidden = false
-                
+
             }
         }
-        
+
         reachability!.unreachableBlock = { (reach: Reachability?) -> Void in
             // this is called on a background thread, but UI updates must
             // be on the main thread, like this:
@@ -98,43 +98,43 @@ class VideoViewController: UIViewController, UISearchBarDelegate {
                 self.videoBack.hidden = true
             }
         }
-        
+
         if reachability?.currentReachabilityStatus() != .NotReachable {
             reachability?.reachableBlock(reachability)
         }
-        
+
     }
 
 
-    func showEntry(notification: NSNotification) {
+    func showEntry(_ notification: Notification) {
         currentEntry = notification.userInfo!["entry"] as! DictEntry
         player = nil
     }
 
     func showCurrentEntry() {
         detailView.showEntry(currentEntry)
-        self.performSelector("startVideo", withObject: nil, afterDelay: 0)
+        self.perform(#selector(VideoViewController.startVideo), with: nil, afterDelay: 0)
     }
 
     func startVideo() {
-        player = MPMoviePlayerController(contentURL: NSURL(string: currentEntry.video)!)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "playerPlaybackStateDidChange:", name: MPMoviePlayerPlaybackStateDidChangeNotification, object: player)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "playerPlaybackDidFinish:", name: MPMoviePlayerPlaybackDidFinishNotification, object: player)
+        player = MPMoviePlayerController(contentURL: URL(string: currentEntry.video)!)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoViewController.playerPlaybackStateDidChange(_:)), name: NSNotification.Name.MPMoviePlayerPlaybackStateDidChange, object: player)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoViewController.playerPlaybackDidFinish(_:)), name: NSNotification.Name.MPMoviePlayerPlaybackDidFinish, object: player)
         player.prepareToPlay()
         player.view!.frame = videoBack.bounds
-        player.view.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        player.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         videoBack.addSubview(player.view!)
         player.play()
 
 
-        activity = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+        activity = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
         videoBack.addSubview(activity)
-        activity.frame = CGRectOffset(activity.frame, (videoBack.bounds.size.width - activity.bounds.size.width) / 2, (videoBack.bounds.size.height - activity.bounds.size.height) / 2)
+        activity.frame = activity.frame.offsetBy(dx: (videoBack.bounds.size.width - activity.bounds.size.width) / 2, dy: (videoBack.bounds.size.height - activity.bounds.size.height) / 2)
         activity.startAnimating()
     }
-    
 
-    func playerPlaybackStateDidChange(notification: NSNotification) {
+
+    func playerPlaybackStateDidChange(_ notification: Notification) {
         if activity == nil { return }
 
         activity.stopAnimating()
@@ -142,8 +142,8 @@ class VideoViewController: UIViewController, UISearchBarDelegate {
         activity = nil
     }
 
-    func playerPlaybackDidFinish(notification: NSNotification) {
-        guard let userInfo: NSDictionary = notification.userInfo else { return }
+    func playerPlaybackDidFinish(_ notification: Notification) {
+        guard let userInfo: NSDictionary = notification.userInfo as! NSDictionary else { return }
         guard let rawReason = userInfo[MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] as? Int else { return }
         guard let reason: MPMovieFinishReason = MPMovieFinishReason(rawValue: rawReason) else { return }
 
