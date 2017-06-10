@@ -3,9 +3,4 @@
 //
 
 #import "SignsDictionary.h"
-#import "DiagramViewController.h"
-#import "DetailViewController.h"
-#import "SearchViewController.h"
-#import "VideoViewController.h"
-#import "HistoryViewController.h"
 #import "imageutil.h"
