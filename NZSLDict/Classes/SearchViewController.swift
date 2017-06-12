@@ -434,9 +434,13 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         let e: DictEntry = searchResults[indexPath.row] as! DictEntry
         cell!.textLabel!.text = e.gloss
         cell!.detailTextLabel!.text = e.minor
-        let iv: UIImageView = cell!.accessoryView as! UIImageView
-        iv.image = UIImage(named: "50.\(e.image)")
-        iv.highlightedImage = transparent_image(iv.image)
+
+        if let entryImage = e.image {
+            let iv: UIImageView = cell!.accessoryView as! UIImageView
+            iv.image = UIImage(named: "50.\(entryImage)")
+            iv.highlightedImage = ImageHelper.cloneWithWhiteAsTransparent(iv.image!)
+        }
+
         return cell!
     }
 
