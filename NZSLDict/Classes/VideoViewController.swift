@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 import MediaPlayer
 
 class VideoViewController: UIViewController, UISearchBarDelegate {
