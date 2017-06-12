@@ -4,6 +4,8 @@ class HistoryViewController: UITableViewController {
     var delegate: SearchViewControllerDelegate!
     var history: [DictEntry] = []
 
+    // MARK: Initializers
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -22,11 +24,16 @@ class HistoryViewController: UITableViewController {
         NotificationCenter.default.removeObserver(self)
     }
 
+    // MARK: View lifecycle callbacks
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.clearsSelectionOnViewWillAppear = false
         self.tableView.contentInset = UIEdgeInsetsMake(20, 0, 0, 0)
+
     }
+
+    // MARK: Notification helpers
 
     func addEntry(_ notification: Notification) {
 
@@ -77,12 +84,11 @@ class HistoryViewController: UITableViewController {
         var cell: UITableViewCell? = tableView.dequeueReusableCell(withIdentifier: cellIdentifier)
 
         if cell == nil {
-            cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: cellIdentifier)
-            let iv: UIImageView = UIImageView(frame: CGRect(x: 0, y: 2, width: tableView.rowHeight*2, height: tableView.rowHeight-4))
-            iv.contentMode = UIViewContentMode.scaleAspectFit
+            cell = UITableViewCell(style: .subtitle, reuseIdentifier: cellIdentifier)
+            let iv: UIImageView = UIImageView(frame: CGRect(x: 0, y: 2, width: cell!.bounds.height * 2, height: cell!.bounds.height - 4))
+            iv.contentMode = .scaleAspectFit
             cell!.accessoryView = iv
         }
-
 
         cell!.textLabel!.text = entry.gloss
         cell!.detailTextLabel!.text = entry.minor
