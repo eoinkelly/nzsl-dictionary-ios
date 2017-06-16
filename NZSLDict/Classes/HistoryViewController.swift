@@ -93,10 +93,11 @@ class HistoryViewController: UITableViewController {
         cell!.textLabel!.text = entry.gloss
         cell!.detailTextLabel!.text = entry.minor
 
-        if let entryImage = entry.image {
-            let iv: UIImageView = cell!.accessoryView as! UIImageView
-            iv.image = UIImage(named: "50.\(entryImage)")
-            iv.highlightedImage = ImageHelper.cloneWithWhiteAsTransparent(iv.image!)
+        let iv: UIImageView = cell!.accessoryView as! UIImageView
+
+        if let signImage = UIImage(named: "50.\(entry.image)") {
+            iv.image = signImage
+            iv.highlightedImage = ImageHelper.cloneWithWhiteAsTransparent(signImage)
         }
 
         return cell!

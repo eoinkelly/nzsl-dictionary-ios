@@ -19,7 +19,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
     var searchSelectorView: UIView!
     var handshapeSelector: UICollectionView!
     var locationSelector: UICollectionView!
-    var searchResults: [AnyObject] = [] // TODO tighten up the types here once SignsDictionary has been converted
+    var searchResults: [DictEntry] = [] 
     var swipeRecognizer: UISwipeGestureRecognizer!
     var subsequent_keyboard: Bool!
     var scrollView: UIScrollView!
@@ -285,7 +285,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         aboutContentWebView.loadRequest(request)
 
 
-        dict = SignsDictionary(file: "nzsl.dat")
+        dict = SignsDictionary()
         wordOfTheDay = dict.wordOfTheDay()
         
         tabBarController?.title = nil
@@ -393,7 +393,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
             return
         }
         scrollView.isHidden = true
-        searchResults = dict.search(for: searchText)! as [AnyObject]
+        searchResults = dict.search(for: searchText)
         searchTable.reloadData()
     }
 
@@ -431,21 +431,22 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
             cell!.accessoryView = iv
         }
 
-        let e: DictEntry = searchResults[indexPath.row] as! DictEntry
+        let e: DictEntry = searchResults[indexPath.row]
         cell!.textLabel!.text = e.gloss
         cell!.detailTextLabel!.text = e.minor
 
-        if let entryImage = e.image {
-            let iv: UIImageView = cell!.accessoryView as! UIImageView
-            iv.image = UIImage(named: "50.\(entryImage)")
-            iv.highlightedImage = ImageHelper.cloneWithWhiteAsTransparent(iv.image!)
+        let iv: UIImageView = cell!.accessoryView as! UIImageView
+
+        if let signImage = UIImage(named: "50.\(e.image)") {
+            iv.image = signImage
+            iv.highlightedImage = ImageHelper.cloneWithWhiteAsTransparent(signImage)
         }
 
         return cell!
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let entry: DictEntry = searchResults[indexPath.row] as! DictEntry
+        let entry: DictEntry = searchResults[indexPath.row]
         self.selectEntry(entry)
         searchBar.resignFirstResponder()
         self.delegate.didSelectEntry(entry)
@@ -525,7 +526,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         }
 
         // searchHandshape(targetHandshape: String?, location: String?) -> [AnyObject]
-        searchResults = dict.searchHandshape(targetHandshape, location: location)! as [AnyObject]
+        searchResults = dict.searchHandshape(targetHandshape, location: location)
         searchTable.reloadData()
     }
     

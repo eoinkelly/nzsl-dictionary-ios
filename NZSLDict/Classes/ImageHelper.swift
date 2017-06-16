@@ -37,7 +37,8 @@ class ImageHelper {
         //
         let bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-        guard let bitcontext = CGContext(data: rawBytesPtr, width: srcWidthInt, height: srcHeightInt, bitsPerComponent: 8,
+        guard let bitcontext = CGContext(data: rawBytesPtr, width: srcWidthInt,
+                                         height: srcHeightInt, bitsPerComponent: 8,
                                          bytesPerRow: srcWidthInt * 4, space: colorSpace, bitmapInfo: bitmapInfo) else {
             cleanupMemory(ptr: rawBytesPtr, numBytes: numBytesToAllocate)
             return src // TODO: clone the image

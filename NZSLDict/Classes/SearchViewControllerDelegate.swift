@@ -1,3 +1,3 @@
-@objc protocol SearchViewControllerDelegate {
+protocol SearchViewControllerDelegate {
     func didSelectEntry(_ entry: DictEntry)
 }
