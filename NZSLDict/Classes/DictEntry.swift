@@ -1,7 +1,5 @@
-import Foundation
-
-struct DictEntry {
-    private static let locationImages = [
+struct DictEntry: Equatable {
+    private static let LOCATION_IMAGES = [
         "in front of body":  "location.1.1.in_front_of_body.png",
         "chest":             "location.4.12.chest.png",
         "lower head":        "location.3.9.lower_head.png",
@@ -25,35 +23,60 @@ struct DictEntry {
         "upper leg":         "location.4.15.upper_leg.png",
         ]
 
-    // TODO: can these be made let if I implement an initializer?
-    var gloss: String = ""
-    var minor: String = ""
-    var maori: String = ""
-    var image: String = ""
-    var video: String = ""
-    var handshape: String = ""
-    var location: String = ""
+    // These properties can be set during initialization only
+    let gloss: String?
+    let minor: String?
+    let maori: String?
+    let image: String?
+    let video: String?
+    let handshape: String?
+    let location: String?
 
-    func handshapeImage() -> String {
+    // MARK: Initializers
+
+    init() {
+        self.gloss = nil
+        self.minor = nil
+        self.maori = nil
+        self.image = nil
+        self.video = nil
+        self.handshape = nil
+        self.location = nil
+    }
+
+    init(gloss: String?, minor: String?, maori: String?, image: String?,
+         video: String?, handshape: String?, location: String?) {
+        self.gloss = gloss
+        self.minor = minor
+        self.maori = maori
+        self.image = image
+        self.video = video
+        self.handshape = handshape
+        self.location = location
+    }
+
+    // MARK: Public functions
+
+    func handshapeImageFileName() -> String? {
+        guard let handshape = self.handshape else { return nil }
         return "handshape.\(handshape).png"
     }
 
-    func locationImage() -> String {
-        // TODO: need to handle possibly missing locations better
-        return DictEntry.locationImages[self.location]!
+    func locationImageFileName() -> String? {
+        guard let loc = self.location else { return nil }
+        return DictEntry.LOCATION_IMAGES[loc]
+    }
+
+    // MARK: Equatable protocol
+
+    static func ==(lhs: DictEntry, rhs: DictEntry) -> Bool {
+        return lhs.gloss == rhs.gloss &&
+            lhs.minor == rhs.minor &&
+            lhs.maori == rhs.maori &&
+            lhs.image == rhs.image &&
+            lhs.video == rhs.video &&
+            lhs.handshape == rhs.handshape &&
+            lhs.location == rhs.location
     }
 }
 
-// TODO: should this be in diff file?
-extension DictEntry: Equatable {}
-
-func ==(lhs: DictEntry, rhs: DictEntry) -> Bool {
-    let areEqual = lhs.gloss == rhs.gloss &&
-                   lhs.minor == rhs.minor &&
-                   lhs.maori == rhs.maori &&
-                   lhs.image == rhs.image &&
-                   lhs.video == rhs.video &&
-                   lhs.handshape == rhs.handshape &&
-                   lhs.location == rhs.location
-    return areEqual
-}

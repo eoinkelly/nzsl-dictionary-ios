@@ -28,6 +28,6 @@ class DiagramView: UIView {
 
     func showEntry(_ entry: DictEntry) {
         detailView.showEntry(entry)
-        imageView.image = UIImage(named: entry.image)
+        imageView.image = UIImage(named: entry.image!)
     }
 }

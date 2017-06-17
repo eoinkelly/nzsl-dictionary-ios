@@ -58,7 +58,7 @@ class DetailView: UIView {
         glossView.text = entry.gloss
         minorView.text = entry.minor
         maoriView.text = entry.maori
-        handshapeView.image = UIImage(named: entry.handshapeImage())
-        locationView.image = UIImage(named: entry.locationImage())
+        handshapeView.image = UIImage(named: entry.handshapeImageFileName()!)
+        locationView.image = UIImage(named: entry.locationImageFileName()!)
     }
 }

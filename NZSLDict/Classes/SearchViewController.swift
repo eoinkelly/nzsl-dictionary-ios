@@ -320,7 +320,12 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         
         wotdGlossLabel.text = wordOfTheDay.gloss
         wotdGlossLabel.sizeToFit()
-        wotdImageView.image = UIImage(named: wordOfTheDay.image)
+
+        if let wotdImage = UIImage(named: wordOfTheDay.image!) {
+            wotdImageView.image = wotdImage
+        } else {
+            print("Could not find image for dictEntry: \(wordOfTheDay)")
+        }
 
         self.selectEntry(wordOfTheDay)
 

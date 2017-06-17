@@ -2,40 +2,43 @@ import Foundation
 import SQLite
 
 class SignsDictionary {
-    // "fuck" is conspiciously absent here because it is treated as a special case
-    private static let UNSUITABLE_FOR_WOTD_WORDSET = Set<String>(["(vaginal) discharge",
-                                                                  "abortion", "abuse", "anus", "asshole", "attracted", "balls", "been to",
-                                                                  "bisexual", "bitch", "blow job", "breech (birth)", "bugger",
-                                                                  "bullshit", "cervical smear", "cervix", "circumcise", "cold (behaviour)",
-                                                                  "come", "condom", "contraction (labour)", "cunnilingus",
-                                                                  "cunt", "damn", "defecate", "faeces", "dickhead", "dilate (cervix)",
-                                                                  "ejaculate", "sperm", "episiotomy", "erection", "fart", "foreplay",
-                                                                  "gay", "gender", "get intimate", "get stuffed", "hard-on", "have sex",
-                                                                  "heterosexual", "homo", "horny", "hysterectomy", "intercourse", "labour pains",
-                                                                  "lesbian", "lose one's virginity", "love bite", "lust",
-                                                                  "masturbate (female)", "masturbate", "wanker", "miscarriage", "orgasm",
-                                                                  "ovaries", "penis", "period", "period pains", "promiscuous",
-                                                                  "prostitute", "rape", "sanitary pad", "sex", "sexual abuse", "shit",
-                                                                  "smooch", "sperm", "strip", "suicide", "tampon", "testicles", "vagina", "virgin"])
+    // These words are still in the dictionary and can be found via search but
+    // will not appear as "word of the day". "fuck" is conspiciously absent
+    // here because it is treated as a special case.
+    private static let UNSUITABLE_FOR_WOTD_WORDSET = Set<String>([
+        "(vaginal) discharge", "abortion", "abuse", "anus", "asshole", "attracted", "balls", "been to", "bisexual", "bitch",
+        "blow job", "breech (birth)", "bugger", "bullshit", "cervical smear", "cervix", "circumcise", "cold (behaviour)", "come",
+        "condom", "contraction (labour)", "cunnilingus", "cunt", "damn", "defecate", "faeces", "dickhead", "dilate (cervix)",
+        "ejaculate", "sperm", "episiotomy", "erection", "fart", "foreplay", "gay", "gender", "get intimate", "get stuffed",
+        "hard-on", "have sex", "heterosexual", "homo", "horny", "hysterectomy", "intercourse", "labour pains", "lesbian",
+        "lose one's virginity", "love bite", "lust", "masturbate (female)", "masturbate", "wanker", "miscarriage", "orgasm",
+        "ovaries", "penis", "period", "period pains", "promiscuous", "prostitute", "rape", "sanitary pad", "sex", "sexual abuse",
+        "shit", "smooch", "sperm", "strip", "suicide", "tampon", "testicles", "vagina", "virgin"])
 
-    private var numWordsInDB: Int = 0
+    // Knowing the number of rows in the DB lets us calculate WOTD
+    private var numRowsInDB: Int = 0
+
+    // SQLite.swift table types
     private let wordsTable: Table = Table("words")
-    private let glossColumn = Expression<String>("gloss")
-    private let maoriColumn = Expression<String>("maori")
-    private let minorColumn = Expression<String>("minor")
-    private let pictureColumn = Expression<String>("picture")
-    private let videoColumn = Expression<String>("video")
-    private let handshapeColumn = Expression<String>("handshape")
-    private let locationColumn = Expression<String>("location")
+
+    // SQLite.swift column types
+    private let glossColumn = Expression<String?>("gloss")
+    private let maoriColumn = Expression<String?>("maori")
+    private let minorColumn = Expression<String?>("minor")
+    private let pictureColumn = Expression<String?>("picture")
+    private let videoColumn = Expression<String?>("video")
+    private let handshapeColumn = Expression<String?>("handshape")
+    private let locationColumn = Expression<String?>("location")
+
+    // SQLite.swift DB connection
     private var db: Connection!
 
     // MARK: Initializers
 
-    init() {
+    init?() {
         guard let sqliteDbFilePath = Bundle.main.path(forResource: "nzsl", ofType: "db") else {
-            // TODO: what to do with this error?
-            print("Failed to create db file path")
-            return
+            print("Failed to find the signs dictionary at the expected path")
+            return nil
         }
 
         do {
@@ -51,15 +54,14 @@ class SignsDictionary {
             #endif
 
             // Gather the count of words in the DB for later display in the UI.
-            self.numWordsInDB = try db.scalar(self.wordsTable.count)
+            self.numRowsInDB = try db.scalar(self.wordsTable.count)
 
             #if DEBUG
-                print("Found \(numWordsInDB) words in Signs Database")
+                print("There are \(self.numRowsInDB) words in the Signs Database")
             #endif
         } catch {
-            // TODO: what to do with this error?
-            print("Failed to setup \(sqliteDbFilePath) SQLite DB")
-            return
+            print("Failed to connect to '\(sqliteDbFilePath)' SQLite DB")
+            return nil
         }
     }
 
@@ -77,27 +79,29 @@ class SignsDictionary {
 
         do {
             for row in try db.prepare(exactPrimaryQuery) {
-                resultSet.add(buildDictEntryFromRow(row))
+                resultSet.add(row)
             }
             for row in try db.prepare(containsPrimaryQuery) {
-                resultSet.add(buildDictEntryFromRow(row))
+                resultSet.add(row)
             }
             for row in try db.prepare(exactSecondaryQuery) {
-                resultSet.add(buildDictEntryFromRow(row))
+                resultSet.add(row)
             }
             for row in try db.prepare(containsSecondaryQuery) {
-                resultSet.add(buildDictEntryFromRow(row))
+                resultSet.add(row)
             }
         } catch {
-            print("Encountered an error while performing search")
+            #if DEBUG
+                print("Encountered an error while performing search")
+            #endif
             return []
         }
 
         #if DEBUG
-            print("Found \(resultSet.count) results")
+            print("Found \(resultSet.count) results for search term '\(target)'")
         #endif
 
-        return resultSet.array as! [DictEntry]
+        return resultSet.array.map({ buildDictEntryFromRow($0 as! Row) })
     }
 
     func searchHandshape(_ targetHandshape: String?, location targetLocation: String?) -> [DictEntry] {
@@ -132,11 +136,16 @@ class SignsDictionary {
 
     // How this works:
     //
-    //     1. Find 100 candidate words from the database
-    //     2. iterate through them until we find one which is suitable and return it
+    //     1. Find 100 candidate DictEntrys from the database with an offset calculated
+    //        based on today's date (offset will change only when date does)
+    //     2. Iterate through the candidates until we find one which is suitable and
+    //        return it.
     //
     func wordOfTheDay() -> DictEntry {
-        let offset = numSecondsBetweenJan1970AndStartOfToday() % self.numWordsInDB
+        // Avoid division by 0 error
+        guard self.numRowsInDB > 0 else { return DictEntry() }
+
+        let offset = numSecondsBetweenJan1970AndStartOfToday() % self.numRowsInDB
         let query = self.wordsTable.limit(100, offset: offset)
 
         do {
@@ -147,7 +156,9 @@ class SignsDictionary {
                 }
             }
         } catch {
-            print("Failed to find a word of the day")
+            #if DEBUG
+                print("Failed to find a word of the day")
+            #endif
         }
 
         return DictEntry()
@@ -157,7 +168,6 @@ class SignsDictionary {
     // MARK: Private helper functions
 
     private func buildDictEntryFromRow(_ row: Row) -> DictEntry {
-        // TODO: how do i ensure that the value gets set to emtpy string if it comes back as null from DB?
         return DictEntry(gloss: row[glossColumn],
                             minor: row[minorColumn],
                             maori: row[maoriColumn],
@@ -168,8 +178,12 @@ class SignsDictionary {
     }
 
     private func entryIsSuitableAsWotd(_ dictEntry: DictEntry) -> Bool {
-        if SignsDictionary.UNSUITABLE_FOR_WOTD_WORDSET.contains(dictEntry.gloss.lowercased()) { return false }
-        if dictEntry.gloss.lowercased().range(of:"fuck") != nil { return false }
+        guard let gloss = dictEntry.gloss else { return false }
+        let lcGloss = gloss.lowercased()
+
+        if SignsDictionary.UNSUITABLE_FOR_WOTD_WORDSET.contains(lcGloss) { return false }
+        if lcGloss.range(of:"fuck") != nil { return false }
+
         return true
     }
 
