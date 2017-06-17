@@ -4,10 +4,10 @@ import UIKit
 let HandshapeAnyCellIdentifier: String = "CellAny"
 let HandshapeIconCellIdentifier: String = "CellIcon"
 
-class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, UICollectionViewDataSource, UICollectionViewDelegate , UIWebViewDelegate {
+class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UIWebViewDelegate, UIAlertViewDelegate {
 
     var delegate: SearchViewControllerDelegate! // this was auto converted as 'weak var' TODO figure this out
-    var dict: SignsDictionary!
+    var dictionary: SignsDictionary!
     var wordOfTheDay: DictEntry!
     var modeSwitch: UISegmentedControl!
     var searchBar: UISearchBar!
@@ -19,11 +19,13 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
     var searchSelectorView: UIView!
     var handshapeSelector: UICollectionView!
     var locationSelector: UICollectionView!
-    var searchResults: [DictEntry] = [] 
+    var searchResults: [DictEntry] = []
     var swipeRecognizer: UISwipeGestureRecognizer!
     var subsequent_keyboard: Bool!
     var scrollView: UIScrollView!
     var aboutContentWebView: UIWebView!
+
+    var fatalErrorOccured = false
 
     // MARK: Fixed datasource initialization
     // why do they leave the first element blank?
@@ -158,38 +160,38 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         modeSwitch.selectedSegmentIndex = 0
         modeSwitch.tintColor = UIColor.white;
         modeSwitch.addTarget(self, action: #selector(SearchViewController.selectSearchMode(_:)), for: .valueChanged)
-      
+
         self.view.addSubview(modeSwitch)
         searchTable = UITableView(frame: CGRect(x: 0, y: 0 + 44, width: view.bounds.size.width, height: view.bounds.size.height - (0 + 44)))
         searchTable.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         searchTable.rowHeight = 50
         searchTable.dataSource = self
         searchTable.delegate = self
-        
+
         view.addSubview(searchTable)
         swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(SearchViewController.hideKeyboard))
         swipeRecognizer.direction = [.up, .down]
         swipeRecognizer.delegate = self
         searchTable.addGestureRecognizer(swipeRecognizer)
-        
+
         scrollView = UIScrollView.init(frame: searchTable.frame);
         scrollView.contentSize = CGSize.init(width: self.view.bounds.width, height: 600)
         scrollView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         scrollView.backgroundColor = UIColor.white
-        
-        
-        
+
+
+
         wotdView = UIView.init(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 125))
         wotdView.autoresizingMask = .flexibleWidth
         wotdView.backgroundColor = UIColor.white
-        
+
         wotdLabel = UILabel(frame: CGRect(x: 16, y: 16, width: wotdView.bounds.size.width * 0.7, height: 20))
         wotdLabel.autoresizingMask = .flexibleHeight
         wotdLabel.text = "Word of the day"
         wotdLabel.font = UIFont.systemFont(ofSize: 14)
         wotdLabel.textColor = AppSecondaryTextColour
         wotdView.addSubview(wotdLabel)
-        
+
         wotdGlossLabel = UILabel(frame: CGRect(x: 16, y: 40, width: wotdView.bounds.size.width * 0.6, height: 24))
         wotdGlossLabel.autoresizingMask = .flexibleHeight
         wotdGlossLabel.numberOfLines = 0
@@ -206,18 +208,18 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         wotdImageView.isUserInteractionEnabled = true
         wotdView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SearchViewController.selectWotd(_:))))
         wotdView.addSubview(wotdImageView)
-        
-        
+
+
         aboutContentWebView = UIWebView.init(frame: CGRect(x: 0, y: wotdView.bounds.maxY + 44, width: wotdView.frame.width, height: 500))
         aboutContentWebView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         aboutContentWebView.delegate = self
-        
+
         scrollView.insertSubview(aboutContentWebView, belowSubview: wotdView)
         scrollView.addSubview(wotdView)
-        
+
         self.view.addSubview(scrollView)
 
-        
+
         searchSelectorView = UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 200))
         searchSelectorView.autoresizingMask = .flexibleWidth
 
@@ -271,33 +273,37 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.dictionary = SignsDictionary()
+        if self.dictionary == nil {
+            self.fatalErrorOccured = true
+            return
+        }
+
         if self.responds(to: #selector(getter: UIViewController.edgesForExtendedLayout)) {
             self.edgesForExtendedLayout = UIRectEdge()
         }
-        
+
         guard let aboutPath = Bundle.main.path(forResource: "about.html", ofType: nil) else {
             print("Failed to find about.html")
             return
         }
-        
+
         let aboutUrl = URL(fileURLWithPath: aboutPath)
         let request = URLRequest(url: aboutUrl)
         aboutContentWebView.loadRequest(request)
 
+        self.wordOfTheDay = dictionary.wordOfTheDay()
 
-        dict = SignsDictionary()
-        wordOfTheDay = dict.wordOfTheDay()
-        
         tabBarController?.title = nil
         let navbarTitleFirstSegment = UILabel()
         let navbarTitleSecondSegment = UILabel()
         navbarTitleFirstSegment.textColor = UIColor.white;
         navbarTitleSecondSegment.textColor = UIColor.white;
-        
+
         if navbarTitleFirstSegment.responds(to: #selector(setter: UITextField.attributedText)) {
             let navbarTitleFirstSegmentText = NSMutableAttributedString(string: "NZSL", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 22)])
             let navbarTitleSecondSegmentText = NSMutableAttributedString(string: "dictionary", attributes: [NSFontAttributeName: UIFont.italicSystemFont(ofSize: 22)])
-        
+
             navbarTitleFirstSegment.attributedText = navbarTitleFirstSegmentText
             navbarTitleSecondSegment.attributedText = navbarTitleSecondSegmentText
         }
@@ -305,19 +311,19 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
             navbarTitleFirstSegment.text = "NZSL "
             navbarTitleSecondSegment.text = "dictionary"
         }
-        
+
         navbarTitleFirstSegment.sizeToFit();
         navbarTitleSecondSegment.sizeToFit();
-        
+
         self.tabBarController?.navigationItem.setLeftBarButtonItems([
             UIBarButtonItem.init(customView: navbarTitleFirstSegment),
             UIBarButtonItem.init(customView: navbarTitleSecondSegment)
         ], animated: false)
-        
-        
+
+
         let navigationBarRightButtonItem = UIBarButtonItem.init(customView: modeSwitch);
         self.tabBarController?.navigationItem.setRightBarButton(navigationBarRightButtonItem, animated: false)
-        
+
         wotdGlossLabel.text = wordOfTheDay.gloss
         wotdGlossLabel.sizeToFit()
 
@@ -338,8 +344,24 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         if modeSwitch.selectedSegmentIndex == 0 && searchBar.text!.characters.count == 0 {
             searchBar.becomeFirstResponder()
         }
+
+        // We must wait for viewDidAppear to create and display the modal
+        // dialog because the window heirarchy is not ready before this hook
+        // fires.
+        if self.fatalErrorOccured {
+            let msg = "We failed to load the words database so we cannot continue so will exit now. " +
+                      "We are very sorry for the inconvenience. Please contact the developer."
+            let alertController = UIAlertController(title: "Sorry", message: msg, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Ok", style: .default) { (action) -> Void in
+                exit(0) // End the process
+            }
+
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
+        }
+
     }
-    
+
     override func viewDidLayoutSubviews() {
         // Autosize the scrollview
         var contentRect = CGRect.zero
@@ -398,7 +420,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
             return
         }
         scrollView.isHidden = true
-        searchResults = dict.search(for: searchText)
+        searchResults = dictionary.search(for: searchText)
         searchTable.reloadData()
     }
 
@@ -488,7 +510,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         }
         else {
             cell = collectionView.dequeueReusableCell(withReuseIdentifier: HandshapeIconCellIdentifier, for: indexPath)
-            
+
             var img: UIImageView! = cell.contentView.viewWithTag(1) as! UIImageView!
             if img == nil {
                 img = UIImageView(frame: cell.contentView.bounds.insetBy(dx: 3, dy: 3))
@@ -504,7 +526,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
             else if collectionView == locationSelector {
                 img.image = UIImage(named: Locations[indexPath.row][1])
             }
-            
+
             img.backgroundColor = UIColor.white
         }
         return cell
@@ -531,17 +553,17 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         }
 
         // searchHandshape(targetHandshape: String?, location: String?) -> [AnyObject]
-        searchResults = dict.searchHandshape(targetHandshape, location: location)
+        searchResults = dictionary.searchHandshape(targetHandshape, location: location)
         searchTable.reloadData()
     }
-    
-    
+
+
     func webViewDidStartLoad(_ webView: UIWebView) {
         var frame = webView.frame
         frame.size.height = 5.0
         webView.frame = frame
     }
-    
+
     func webViewDidFinishLoad(_ webView: UIWebView) {
         let mWebViewTextSize = webView.sizeThatFits(CGSize(width: 1.0, height: 1.0))
         // Pass about any size
@@ -551,21 +573,21 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         //Disable bouncing in webview
         webView.scrollView.bounces = false
     }
-    
+
     func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
         if request.url!.isFileURL {
             return true
         }
-        
+
         if request.url!.scheme == "follow" {
             openTwitterClientForUserName("NZSLDict")
             return false
         }
-        
+
         UIApplication.shared.openURL(request.url!)
         return false
     }
-    
+
     // https://gist.github.com/vhbit/958738
     func openTwitterClientForUserName(_ userName: String) {
         let urls = [
@@ -582,9 +604,9 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
             /** uncomment if you don't have a special handling for no registered twitter clients */
             "http://twitter.com/{username}", // Web fallback,
         ]
-        
+
         let application: UIApplication = UIApplication.shared
-        
+
         for candidate in urls {
             let urlString = candidate.replacingOccurrences(of: "{username}", with:userName)
             if let url = URL(string: urlString) {
