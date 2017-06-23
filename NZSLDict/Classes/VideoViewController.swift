@@ -117,7 +117,7 @@ class VideoViewController: UIViewController, UISearchBarDelegate {
     }
 
     func startVideo() {
-        player = MPMoviePlayerController(contentURL: URL(string: currentEntry.video)!)
+        player = MPMoviePlayerController(contentURL: URL(string: currentEntry.video!)!)
         NotificationCenter.default.addObserver(self, selector: #selector(VideoViewController.playerPlaybackStateDidChange(_:)), name: NSNotification.Name.MPMoviePlayerPlaybackStateDidChange, object: player)
         NotificationCenter.default.addObserver(self, selector: #selector(VideoViewController.playerPlaybackDidFinish(_:)), name: NSNotification.Name.MPMoviePlayerPlaybackDidFinish, object: player)
         player.prepareToPlay()

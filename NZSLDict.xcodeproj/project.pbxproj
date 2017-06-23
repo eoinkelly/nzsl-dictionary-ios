@@ -37,7 +37,6 @@
 		49342FA81C488C7100C355B2 /* DiagramViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49342FA71C488C7100C355B2 /* DiagramViewController.swift */; };
 		49342FAA1C4890CF00C355B2 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49342FA91C4890CF00C355B2 /* SearchViewController.swift */; };
 		49342FAC1C489B9800C355B2 /* SearchViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49342FAB1C489B9800C355B2 /* SearchViewControllerDelegate.swift */; };
-		49608D001C279005001037C4 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 49608CFF1C279005001037C4 /* libsqlite3.tbd */; };
 		4960AD251C28E19D001037C4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4960AD181C28E19D001037C4 /* Default-568h@2x.png */; };
 		4960AD261C28E19D001037C4 /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4960AD191C28E19D001037C4 /* Default-Landscape@2x~ipad.png */; };
 		4960AD271C28E19D001037C4 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4960AD1A1C28E19D001037C4 /* Default-Landscape~ipad.png */; };
@@ -71,11 +70,16 @@
 		4960AD661C28E22E001037C4 /* screenshot-iphone5-home.png in Resources */ = {isa = PBXBuildFile; fileRef = 4960AD4C1C28E22E001037C4 /* screenshot-iphone5-home.png */; };
 		4960AD671C28E22E001037C4 /* screenshot-iphone5-search.png in Resources */ = {isa = PBXBuildFile; fileRef = 4960AD4D1C28E22E001037C4 /* screenshot-iphone5-search.png */; };
 		4960AD681C28E22E001037C4 /* screenshot-iphone5-video.png in Resources */ = {isa = PBXBuildFile; fileRef = 4960AD4E1C28E22E001037C4 /* screenshot-iphone5-video.png */; };
-		4960AD8A1C28E2A5001037C4 /* SignsDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 4960AD771C28E2A5001037C4 /* SignsDictionary.m */; };
 		49665FDF1EEDD8A200D56001 /* ImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49665FDE1EEDD8A200D56001 /* ImageHelper.swift */; };
+		49665FE41EEE20BF00D56001 /* SignsDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49665FE31EEE20BF00D56001 /* SignsDictionary.swift */; };
+		49665FE61EEE221900D56001 /* DictEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49665FE51EEE221900D56001 /* DictEntry.swift */; };
 		4969EAF71C462A69002032B7 /* ViewControllerPhone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4969EAF61C462A69002032B7 /* ViewControllerPhone.swift */; };
 		499DFD921C3F4FE100F45D0E /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499DFD911C3F4FE100F45D0E /* DetailView.swift */; };
 		49BD49EE1C6FC42000124A16 /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BD49ED1C6FC42000124A16 /* VideoViewController.swift */; };
+		49DDB3EE1EF33F9B001B067E /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49DDB3ED1EF33F9B001B067E /* SQLite.framework */; };
+		49DDB3EF1EF33FCB001B067E /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49DDB3ED1EF33F9B001B067E /* SQLite.framework */; };
+		49DDB3F01EF33FCB001B067E /* SQLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 49DDB3ED1EF33F9B001B067E /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		49DDB3F21EF34076001B067E /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 49608CFF1C279005001037C4 /* libsqlite3.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +91,20 @@
 			remoteInfo = NZSLDict;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		49DDB3F11EF33FCC001B067E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				49DDB3F01EF33FCB001B067E /* SQLite.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0313E6CE1EFB330700FEDC67 /* Default-1104h.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-1104h.png"; sourceTree = "<group>"; };
@@ -161,14 +179,17 @@
 		4960AD4C1C28E22E001037C4 /* screenshot-iphone5-home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "screenshot-iphone5-home.png"; sourceTree = "<group>"; };
 		4960AD4D1C28E22E001037C4 /* screenshot-iphone5-search.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "screenshot-iphone5-search.png"; sourceTree = "<group>"; };
 		4960AD4E1C28E22E001037C4 /* screenshot-iphone5-video.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "screenshot-iphone5-video.png"; sourceTree = "<group>"; };
-		4960AD761C28E2A5001037C4 /* SignsDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignsDictionary.h; sourceTree = "<group>"; };
-		4960AD771C28E2A5001037C4 /* SignsDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignsDictionary.m; sourceTree = "<group>"; };
 		49665FDE1EEDD8A200D56001 /* ImageHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageHelper.swift; sourceTree = "<group>"; };
+		49665FE31EEE20BF00D56001 /* SignsDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignsDictionary.swift; sourceTree = "<group>"; };
+		49665FE51EEE221900D56001 /* DictEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictEntry.swift; sourceTree = "<group>"; };
+		49665FE71EEE4F4200D56001 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = "SQLite.swift/build/Debug-iphoneos/SQLite.framework"; sourceTree = "<group>"; };
+		49665FE91EEE4F6D00D56001 /* SQLite.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SQLite.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4969EAF61C462A69002032B7 /* ViewControllerPhone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerPhone.swift; sourceTree = "<group>"; };
 		499DFD8C1C3F483A00F45D0E /* NZSLDict-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NZSLDict-Bridging-Header.h"; sourceTree = "<group>"; };
 		499DFD911C3F4FE100F45D0E /* DetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		49AFE04F1C28ED0D00462381 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		49BD49ED1C6FC42000124A16 /* VideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = "<group>"; };
+		49DDB3ED1EF33F9B001B067E /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = "../../../Library/Developer/Xcode/DerivedData/NZSL-bmabcjyjtzxcsoceuyygothewocx/Build/Products/Debug-iphonesimulator/SQLite.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,7 +204,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49608D001C279005001037C4 /* libsqlite3.tbd in Frameworks */,
+				49DDB3F21EF34076001B067E /* libsqlite3.tbd in Frameworks */,
+				49DDB3EF1EF33FCB001B067E /* SQLite.framework in Frameworks */,
+				49DDB3EE1EF33F9B001B067E /* SQLite.framework in Frameworks */,
 				374E59E0173260B9004C7D44 /* QuartzCore.framework in Frameworks */,
 				37B3111515133261005F45FA /* MediaPlayer.framework in Frameworks */,
 				37B3F28E1512F946005F45FA /* UIKit.framework in Frameworks */,
@@ -211,6 +234,7 @@
 				03884A2E1EF0947D00EF5412 /* ic_videocam_off.png */,
 				03884A2F1EF0947D00EF5412 /* ic_videocam_off@2x.png */,
 				03EAA39C1EF0D52E001B3C6F /* Fonts */,
+				49665FE91EEE4F6D00D56001 /* SQLite.framework */,
 				039081C81EEA3F800050C180 /* app-icon-transparent.png */,
 				49AFE04F1C28ED0D00462381 /* README.md */,
 				4960AD341C28E22E001037C4 /* App Icons */,
@@ -237,6 +261,8 @@
 			children = (
 				03C248B21EF1E12000569CE0 /* Reachability */,
 				03884A2C1EEFC20300EF5412 /* SystemConfiguration.framework */,
+				49DDB3ED1EF33F9B001B067E /* SQLite.framework */,
+				49665FE71EEE4F4200D56001 /* SQLite.framework */,
 				49608CFF1C279005001037C4 /* libsqlite3.tbd */,
 				374E59DF173260B9004C7D44 /* QuartzCore.framework */,
 				37B3111415133261005F45FA /* MediaPlayer.framework */,
@@ -337,8 +363,8 @@
 				49342FAB1C489B9800C355B2 /* SearchViewControllerDelegate.swift */,
 				49342FA91C4890CF00C355B2 /* SearchViewController.swift */,
 				49BD49ED1C6FC42000124A16 /* VideoViewController.swift */,
-				4960AD761C28E2A5001037C4 /* SignsDictionary.h */,
-				4960AD771C28E2A5001037C4 /* SignsDictionary.m */,
+				49665FE31EEE20BF00D56001 /* SignsDictionary.swift */,
+				49665FE51EEE221900D56001 /* DictEntry.swift */,
 				499DFD8C1C3F483A00F45D0E /* NZSLDict-Bridging-Header.h */,
 				03617D8A1EE8DA2400E26B34 /* PaddedUISearchBar.swift */,
 				49665FDE1EEDD8A200D56001 /* ImageHelper.swift */,
@@ -375,6 +401,7 @@
 				37B3F2861512F946005F45FA /* Frameworks */,
 				37B3F2871512F946005F45FA /* Resources */,
 				4960AD161C27AD3E001037C4 /* Copy sign data images to bundle */,
+				49DDB3F11EF33FCC001B067E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -523,12 +550,13 @@
 				039081CB1EEA4A2E0050C180 /* AboutViewController.swift in Sources */,
 				49342FA81C488C7100C355B2 /* DiagramViewController.swift in Sources */,
 				49342FA61C48821200C355B2 /* DetailViewController.swift in Sources */,
-				4960AD8A1C28E2A5001037C4 /* SignsDictionary.m in Sources */,
 				4969EAF71C462A69002032B7 /* ViewControllerPhone.swift in Sources */,
+				49665FE61EEE221900D56001 /* DictEntry.swift in Sources */,
 				49BD49EE1C6FC42000124A16 /* VideoViewController.swift in Sources */,
 				49342FA41C48746900C355B2 /* DiagramView.swift in Sources */,
 				03C248BA1EF1E4BE00569CE0 /* Reachability.m in Sources */,
 				499DFD921C3F4FE100F45D0E /* DetailView.swift in Sources */,
+				49665FE41EEE20BF00D56001 /* SignsDictionary.swift in Sources */,
 				49665FDF1EEDD8A200D56001 /* ImageHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -674,6 +702,10 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEFINES_MODULE = YES;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SQLite.swift/build/Debug-iphoneos",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NZSLDict/NZSLDict-Prefix.pch";
 				INFOPLIST_FILE = "NZSLDict/NZSLDict-Info.plist";
@@ -723,6 +755,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -773,6 +806,10 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SQLite.swift/build/Debug-iphoneos",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NZSLDict/NZSLDict-Prefix.pch";
 				INFOPLIST_FILE = "NZSLDict/NZSLDict-Info.plist";
@@ -795,6 +832,10 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEFINES_MODULE = YES;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SQLite.swift/build/Debug-iphoneos",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NZSLDict/NZSLDict-Prefix.pch";
 				INFOPLIST_FILE = "NZSLDict/NZSLDict-Info.plist";

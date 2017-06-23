@@ -4,10 +4,10 @@ import UIKit
 let HandshapeAnyCellIdentifier: String = "CellAny"
 let HandshapeIconCellIdentifier: String = "CellIcon"
 
-class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, UICollectionViewDataSource, UICollectionViewDelegate , UIWebViewDelegate {
+class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UIWebViewDelegate, UIAlertViewDelegate {
 
     var delegate: SearchViewControllerDelegate! // this was auto converted as 'weak var' TODO figure this out
-    var dict: SignsDictionary!
+    var dictionary: SignsDictionary!
     var wordOfTheDay: DictEntry!
     var modeSwitch: UISegmentedControl!
     var searchBar: UISearchBar!
@@ -19,7 +19,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
     var searchSelectorView: UIView!
     var handshapeSelector: UICollectionView!
     var locationSelector: UICollectionView!
-    var searchResults: [AnyObject] = [] // TODO tighten up the types here once SignsDictionary has been converted
+    var searchResults: [DictEntry] = []
     var swipeRecognizer: UISwipeGestureRecognizer!
     var subsequent_keyboard: Bool!
     var scrollView: UIScrollView!
@@ -28,6 +28,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
     // This is a fixed default in iOS
     var detailViewMasterWidth = CGFloat(320)
     var statusBarHeight = CGFloat(20)
+    var fatalErrorOccured = false
 
     // MARK: Fixed datasource initialization
     // why do they leave the first element blank?
@@ -198,8 +199,8 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
 
         scrollView = UIScrollView.init(frame: searchTable.frame);
         scrollView.contentSize = CGSize.init(width: self.view.bounds.width, height: 600)
-        scrollView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
-        scrollView.backgroundColor = UIColor.whiteColor()
+        scrollView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        scrollView.backgroundColor = UIColor.white
 
 
 
@@ -232,8 +233,8 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         wotdView.addSubview(wotdImageView)
 
 
-        aboutContentWebView = UIWebView.init(frame: CGRectMake(0, wotdView.frame.maxY + 44, wotdView.frame.width, 500))
-        aboutContentWebView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        aboutContentWebView = UIWebView.init(frame: CGRect(x: 0, y: wotdView.bounds.maxY + 44, width: wotdView.frame.width, height: 500))
+        aboutContentWebView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         aboutContentWebView.delegate = self
 
         scrollView.insertSubview(aboutContentWebView, belowSubview: wotdView)
@@ -295,6 +296,12 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.dictionary = SignsDictionary()
+        if self.dictionary == nil {
+            self.fatalErrorOccured = true
+            return
+        }
+
         if self.responds(to: #selector(getter: UIViewController.edgesForExtendedLayout)) {
             self.edgesForExtendedLayout = UIRectEdge()
         }
@@ -308,19 +315,15 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         let request = URLRequest(url: aboutUrl)
         aboutContentWebView.loadRequest(request)
 
-
-        dict = SignsDictionary(file: "nzsl.dat")
-        wordOfTheDay = dict.wordOfTheDay()
+        self.wordOfTheDay = dictionary.wordOfTheDay()
 
         tabBarController?.title = nil
         let navbarTitleFirstSegment = UILabel()
         let navbarTitleSecondSegment = UILabel()
+        navbarTitleFirstSegment.textColor = UIColor.white;
+        navbarTitleSecondSegment.textColor = UIColor.white;
 
-        navbarTitleFirstSegment.textColor = UIColor.whiteColor();
-        navbarTitleSecondSegment.textColor = UIColor.whiteColor();
-
-        if navbarTitleFirstSegment.respondsToSelector("setAttributedText:") {
-
+        if navbarTitleFirstSegment.responds(to: #selector(setter: UITextField.attributedText)) {
             let navbarTitleFirstSegmentText = NSMutableAttributedString(string: "NZSL", attributes: [NSFontAttributeName: UIFont.init(name: "Montserrat-Bold", size: 22)!])
             let navbarTitleSecondSegmentText = NSMutableAttributedString(string: "dictionary", attributes: [NSFontAttributeName: UIFont.init(name: "Montserrat-Italic", size: 22)!])
 
@@ -346,13 +349,36 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
 
         wotdGlossLabel.text = wordOfTheDay.gloss
         wotdGlossLabel.sizeToFit()
-        wotdImageView.image = UIImage(named: wordOfTheDay.image)
+
+        if let wotdImage = UIImage(named: wordOfTheDay.image!) {
+            wotdImageView.image = wotdImage
+        } else {
+            print("Could not find image for dictEntry: \(wordOfTheDay)")
+        }
 
         self.selectEntry(wordOfTheDay)
 
         handshapeSelector.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .left)
         locationSelector.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .left)
         self.selectSearchMode(modeSwitch)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        // We must wait for viewDidAppear to create and display the modal
+        // dialog because the window heirarchy is not ready before this hook
+        // fires.
+        if self.fatalErrorOccured {
+            let msg = "We failed to load the words database so we cannot continue so will exit now. " +
+                      "We are very sorry for the inconvenience. Please contact the developer."
+            let alertController = UIAlertController(title: "Sorry", message: msg, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Ok", style: .default) { (action) -> Void in
+                exit(0) // End the process
+            }
+
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
+        }
+
     }
 
     override func viewDidLayoutSubviews() {
@@ -413,7 +439,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
             return
         }
         scrollView.isHidden = true
-        searchResults = dict.search(for: searchText)! as [AnyObject]
+        searchResults = dictionary.search(for: searchText)
         searchTable.reloadData()
     }
 
@@ -451,17 +477,22 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
             cell!.accessoryView = iv
         }
 
-        let e: DictEntry = searchResults[indexPath.row] as! DictEntry
+        let e: DictEntry = searchResults[indexPath.row]
         cell!.textLabel!.text = e.gloss
         cell!.detailTextLabel!.text = e.minor
+
         let iv: UIImageView = cell!.accessoryView as! UIImageView
-        iv.image = UIImage(named: "50.\(e.image)")
-        iv.highlightedImage = transparent_image(iv.image)
+
+        if let signImage = UIImage(named: "50.\(e.image)") {
+            iv.image = signImage
+            iv.highlightedImage = ImageHelper.cloneWithWhiteAsTransparent(signImage)
+        }
+
         return cell!
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let entry: DictEntry = searchResults[indexPath.row] as! DictEntry
+        let entry: DictEntry = searchResults[indexPath.row]
         self.selectEntry(entry)
         searchBar.resignFirstResponder()
         self.delegate?.didSelectEntry(entry)
@@ -541,7 +572,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
         }
 
         // searchHandshape(targetHandshape: String?, location: String?) -> [AnyObject]
-        searchResults = dict.searchHandshape(targetHandshape, location: location)! as [AnyObject]
+        searchResults = dictionary.searchHandshape(targetHandshape, location: location)
         searchTable.reloadData()
     }
 
