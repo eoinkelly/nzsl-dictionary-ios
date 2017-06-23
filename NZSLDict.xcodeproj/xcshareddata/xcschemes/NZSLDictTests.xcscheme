@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0730"
+   LastUpgradeVersion = "0830"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -42,9 +42,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "37B3F2881512F946005F45FA"
-            BuildableName = "NZSLDict.app"
-            BlueprintName = "NZSLDict"
+            BlueprintIdentifier = "03B1C88B1EE75B0E008A875C"
+            BuildableName = "NZSLDictTests.xctest"
+            BlueprintName = "NZSLDictTests"
             ReferencedContainer = "container:NZSLDict.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -79,15 +79,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "03B1C88B1EE75B0E008A875C"
-            BuildableName = "NZSLDictTests.xctest"
-            BlueprintName = "NZSLDictTests"
-            ReferencedContainer = "container:NZSLDict.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
