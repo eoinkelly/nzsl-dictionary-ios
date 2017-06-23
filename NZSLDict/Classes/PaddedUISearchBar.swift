@@ -1,3 +1,5 @@
+import UIKit
+
 class PaddedUISearchBar: UISearchBar {
     override func layoutSubviews() {
         super.layoutSubviews()
