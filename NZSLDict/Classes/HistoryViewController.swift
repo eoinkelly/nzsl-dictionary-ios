@@ -8,15 +8,18 @@ class HistoryViewController: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
 
     override init(style: UITableViewStyle) {
         super.init(style: style)
-        self.tabBarItem = UITabBarItem(tabBarSystemItem: UITabBarSystemItem.MostRecent, tag: 0)
+        self.tabBarItem = UITabBarItem(tabBarSystemItem: UITabBarSystemItem.mostRecent, tag: 0)
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "addEntry:", name: EntrySelectedName, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(addEntry),
+                                               name: EntrySelectedName,
+                                               object: nil)
     }
 
     convenience init() {
@@ -94,10 +97,13 @@ class HistoryViewController: UITableViewController {
 
         let iv: UIImageView = cell!.accessoryView as! UIImageView
 
-        if let signImage = UIImage(named: "50.\(entry.image)") {
-            iv.image = signImage
-            iv.highlightedImage = ImageHelper.cloneWithWhiteAsTransparent(signImage)
+        if let img = entry.image {
+            if let signImage = UIImage(named: "50.\(img)") {
+                iv.image = signImage
+                iv.highlightedImage = ImageHelper.cloneWithWhiteAsTransparent(signImage)
+            }
         }
+
 
         return cell!
     }
@@ -109,7 +115,7 @@ class HistoryViewController: UITableViewController {
             "no_add_history": "no_add"
         ] as [String : Any]
 
-        NSNotificationCenter.defaultCenter().postNotificationName(EntrySelectedName, object: self, userInfo: userInfo)
+        NotificationCenter.default.post(name: EntrySelectedName, object: self, userInfo: userInfo)
         self.delegate?.didSelectEntry(dictEntryFromHistory)
     }
 }

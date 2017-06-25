@@ -5,7 +5,7 @@ class SignsDictionary {
     // These words are still in the dictionary and can be found via search but
     // will not appear as "word of the day". "fuck" is conspiciously absent
     // here because it is treated as a special case.
-    private static let UNSUITABLE_FOR_WOTD_WORDSET = Set<String>([
+    fileprivate static let UNSUITABLE_FOR_WOTD_WORDSET = Set<String>([
         "(vaginal) discharge", "abortion", "abuse", "anus", "asshole", "attracted", "balls", "been to", "bisexual", "bitch",
         "blow job", "breech (birth)", "bugger", "bullshit", "cervical smear", "cervix", "circumcise", "cold (behaviour)", "come",
         "condom", "contraction (labour)", "cunnilingus", "cunt", "damn", "defecate", "faeces", "dickhead", "dilate (cervix)",
@@ -16,22 +16,22 @@ class SignsDictionary {
         "shit", "smooch", "sperm", "strip", "suicide", "tampon", "testicles", "vagina", "virgin"])
 
     // Knowing the number of rows in the DB lets us calculate WOTD
-    private var numRowsInDB: Int = 0
+    fileprivate var numRowsInDB: Int = 0
 
     // SQLite.swift table types
-    private let wordsTable: Table = Table("words")
+    fileprivate let wordsTable: Table = Table("words")
 
     // SQLite.swift column types
-    private let glossColumn = Expression<String?>("gloss")
-    private let maoriColumn = Expression<String?>("maori")
-    private let minorColumn = Expression<String?>("minor")
-    private let pictureColumn = Expression<String?>("picture")
-    private let videoColumn = Expression<String?>("video")
-    private let handshapeColumn = Expression<String?>("handshape")
-    private let locationColumn = Expression<String?>("location")
+    fileprivate let glossColumn = Expression<String?>("gloss")
+    fileprivate let maoriColumn = Expression<String?>("maori")
+    fileprivate let minorColumn = Expression<String?>("minor")
+    fileprivate let pictureColumn = Expression<String?>("picture")
+    fileprivate let videoColumn = Expression<String?>("video")
+    fileprivate let handshapeColumn = Expression<String?>("handshape")
+    fileprivate let locationColumn = Expression<String?>("location")
 
     // SQLite.swift DB connection
-    private var db: Connection!
+    fileprivate var db: Connection!
 
     // MARK: Initializers
 
@@ -167,7 +167,7 @@ class SignsDictionary {
 
     // MARK: Private helper functions
 
-    private func buildDictEntryFromRow(_ row: Row) -> DictEntry {
+    fileprivate func buildDictEntryFromRow(_ row: Row) -> DictEntry {
         return DictEntry(gloss: row[glossColumn],
                             minor: row[minorColumn],
                             maori: row[maoriColumn],
@@ -177,7 +177,7 @@ class SignsDictionary {
                             location: row[locationColumn])
     }
 
-    private func entryIsSuitableAsWotd(_ dictEntry: DictEntry) -> Bool {
+    fileprivate func entryIsSuitableAsWotd(_ dictEntry: DictEntry) -> Bool {
         guard let gloss = dictEntry.gloss else { return false }
         let lcGloss = gloss.lowercased()
 
@@ -187,10 +187,10 @@ class SignsDictionary {
         return true
     }
 
-    private func numSecondsBetweenJan1970AndStartOfToday() -> Int {
+    fileprivate func numSecondsBetweenJan1970AndStartOfToday() -> Int {
         let now = Date()
-        let calendar = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)!
-        var components = calendar.components([.year, .month, .day, .hour, .minute, .second], from: now)
+        let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
+        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: now)
         components.setValue(0, for: .hour)
         components.setValue(0, for: .minute)
         components.setValue(0, for: .second)

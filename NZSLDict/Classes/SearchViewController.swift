@@ -141,14 +141,14 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
     // In the old ObjC codebase this function was dispose() but did not seem to be called
     // from anywhere - converted it to deinit here as that seemed to make sense
     // func dispose() {
-    //     NSNotificationCenter.defaultCenter().removeObserver(self)
+    //     NotificationCenter.defaultCenter().removeObserver(self)
     // }
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
 
     func onPad()-> Bool {
-        return UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad
+        return UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.pad
     }
 
     // MARK View lifecycle
@@ -158,35 +158,34 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
             // Create search frame set to fit within the master frame of the
             // detail view controller;
             // @see DetailViewController
-            self.view = UIView.init(frame: CGRectMake(0, statusBarHeight, detailViewMasterWidth, UIScreen.mainScreen().applicationFrame.height))
+            self.view = UIView.init(frame: CGRect(x: 0, y: statusBarHeight, width: detailViewMasterWidth, height: UIScreen.main.applicationFrame.height))
         } else {
-            self.view = UIView.init(frame: UIScreen.mainScreen().applicationFrame)
+            self.view = UIView.init(frame: UIScreen.main.applicationFrame)
         }
 
         view.backgroundColor = AppThemePrimaryLightColor
 
-        searchBar = PaddedUISearchBar(frame: CGRectMake(0, onPad() ? statusBarHeight : 0, view.bounds.size.width, onPad() ? 96 : 44))
+        searchBar = PaddedUISearchBar(frame: CGRect(x: 0, y: onPad() ? statusBarHeight : 0, width: view.bounds.size.width, height: onPad() ? 96 : 44))
         searchBar.backgroundImage = UIImage()
-        searchBar.autoresizingMask = [.FlexibleWidth]
+        searchBar.autoresizingMask = [.flexibleWidth]
         searchBar.tintColor = AppThemePrimaryColor
-        searchBar.tintAdjustmentMode = .Normal
+        searchBar.tintAdjustmentMode = .normal
         searchBar.barTintColor = AppThemePrimaryColor
-        searchBar.opaque = true
+        searchBar.isOpaque = true
 
         searchBar.delegate = self
         self.view.addSubview(searchBar)
 
         modeSwitch = UISegmentedControl(items: ["Abc", UIImage(named: "hands")!])
-        modeSwitch.autoresizingMask = .FlexibleLeftMargin
-        modeSwitch.frame = CGRectMake(view.bounds.size.width -
-            modeSwitch.bounds.size.width - 8, 0 + 16, modeSwitch.bounds.size.width, 32)
+        modeSwitch.autoresizingMask = .flexibleLeftMargin
+        modeSwitch.frame = CGRect(x: view.bounds.size.width - modeSwitch.bounds.size.width - 8, y: 0 + 16, width: modeSwitch.bounds.size.width, height: 32)
         modeSwitch.selectedSegmentIndex = 0
         modeSwitch.tintColor = UIColor.white;
         modeSwitch.addTarget(self, action: #selector(SearchViewController.selectSearchMode(_:)), for: .valueChanged)
 
         self.view.addSubview(modeSwitch)
-        searchTable = UITableView(frame: CGRectMake(0, onPad() ? 96 : 44, view.frame.size.width, view.frame.size.height - (0 + 44)))
-        searchTable.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        searchTable = UITableView(frame: CGRect(x: 0, y: onPad() ? 96 : 44, width: view.frame.size.width, height: view.frame.size.height - (0 + 44)))
+        searchTable.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         searchTable.rowHeight = 50
         searchTable.dataSource = self
         searchTable.delegate = self
@@ -345,7 +344,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
 
 
         let navigationBarRightButtonItem = UIBarButtonItem.init(customView: modeSwitch);
-        self.tabBarController!.navigationItem.setRightBarButtonItem(navigationBarRightButtonItem, animated: false)
+        self.tabBarController!.navigationItem.setRightBarButton(navigationBarRightButtonItem, animated: false)
 
         wotdGlossLabel.text = wordOfTheDay.gloss
         wotdGlossLabel.sizeToFit()
@@ -356,7 +355,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
             print("Could not find image for dictEntry: \(wordOfTheDay)")
         }
 
-        self.selectEntry(wordOfTheDay)
+        self.selectEntry(entry: wordOfTheDay)
 
         handshapeSelector.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .left)
         locationSelector.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .left)
@@ -394,7 +393,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
     // MARK: Callback functions
     func selectWotd(_ sender: UITapGestureRecognizer) {
         if sender.state == .ended {
-            self.selectEntry(wordOfTheDay)
+            self.selectEntry(entry: wordOfTheDay)
             searchBar.resignFirstResponder()
             self.delegate?.didSelectEntry(wordOfTheDay)
         }
@@ -444,7 +443,8 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
     }
 
     func selectEntry(entry: DictEntry) {
-        NSNotificationCenter.defaultCenter().postNotificationName(EntrySelectedName, object: nil, userInfo: ["entry": entry])
+        let msg = ["entry": entry]
+        NotificationCenter.default.post(name: EntrySelectedName, object: nil, userInfo: msg)
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -483,9 +483,11 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
 
         let iv: UIImageView = cell!.accessoryView as! UIImageView
 
-        if let signImage = UIImage(named: "50.\(e.image)") {
-            iv.image = signImage
-            iv.highlightedImage = ImageHelper.cloneWithWhiteAsTransparent(signImage)
+        if let imgName = e.image {
+            if let signImage = UIImage(named: "50." + imgName) {
+                iv.image = signImage
+                iv.highlightedImage = ImageHelper.cloneWithWhiteAsTransparent(signImage)
+            }
         }
 
         return cell!
@@ -493,7 +495,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let entry: DictEntry = searchResults[indexPath.row]
-        self.selectEntry(entry)
+        self.selectEntry(entry: entry)
         searchBar.resignFirstResponder()
         self.delegate?.didSelectEntry(entry)
     }

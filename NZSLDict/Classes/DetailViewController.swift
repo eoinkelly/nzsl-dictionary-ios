@@ -16,9 +16,21 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailViewController.showEntry(_:)), name: EntrySelectedName, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "playerPlaybackStateDidChange:", name: MPMoviePlayerPlaybackStateDidChangeNotification, object: player)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "playerPlaybackDidFinish:", name: MPMoviePlayerPlaybackDidFinishNotification, object: player)
+
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(showEntry),
+                                               name: EntrySelectedName,
+                                               object: nil)
+
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(playerPlaybackStateDidChange),
+                                               name: NSNotification.Name.MPMoviePlayerPlaybackStateDidChange,
+                                               object: player)
+
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(playerPlaybackDidFinish),
+                                               name: NSNotification.Name.MPMoviePlayerPlaybackDidFinish,
+                                               object: player)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -26,7 +38,7 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
     }
 
     deinit {
-       NSNotificationCenter.defaultCenter().removeObserver(self)
+       NotificationCenter.default.removeObserver(self)
         reachability?.stopNotifier()
         reachability = nil
     }
@@ -37,19 +49,19 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
 
         let top_offset: CGFloat = 20
 
-        navigationBar = UINavigationBar(frame: CGRectMake(0, top_offset, view.bounds.size.width, 96 - top_offset))
+        navigationBar = UINavigationBar(frame: CGRect(x: 0, y: top_offset, width: view.bounds.size.width, height: 96 - top_offset))
         navigationBar.barTintColor = AppThemePrimaryColor
-        navigationBar.opaque = false
-        navigationBar.autoresizingMask = .FlexibleWidth
-        navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        navigationBar.isOpaque = false
+        navigationBar.autoresizingMask = .flexibleWidth
+        navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         navigationBar.delegate = self
         view.addSubview(navigationBar)
 
         navigationTitle = UINavigationItem(title: "NZSL Dictionary")
         navigationBar.setItems([navigationTitle], animated: false)
 
-        diagramView = DiagramView(frame: CGRectMake(0, navigationBar.frame.maxY, view.bounds.size.width, view.bounds.size.height / 2))
-        diagramView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight, .FlexibleBottomMargin]
+        diagramView = DiagramView(frame: CGRect(x: 0, y: navigationBar.frame.maxY, width: view.bounds.size.width, height: view.bounds.size.height / 2))
+        diagramView.autoresizingMask = [.flexibleWidth, .flexibleHeight, .flexibleBottomMargin]
         view.addSubview(diagramView)
 
         videoView = UIView(frame: CGRect(x: 0, y: top_offset + 44 + view.bounds.size.height / 2, width: view.bounds.size.width, height: view.bounds.size.height - (top_offset + 44 + view.bounds.size.height / 2)))
@@ -57,15 +69,15 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
         videoView.backgroundColor = UIColor.black
         view.addSubview(videoView)
 
-        playButton = UIButton(type: .RoundedRect)
-        playButton.frame = CGRectMake(0, (videoView.bounds.size.height - 40) / 2, videoView.bounds.width, 40)
-        playButton.titleLabel?.textAlignment = .Center
-        playButton.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleTopMargin, .FlexibleBottomMargin]
-        playButton.setTitle("Play Video", forState: .Normal)
-        playButton.setTitle("Playing videos requires access to the Internet.", forState: .Disabled)
-        playButton.setTitleColor(UIColor.whiteColor(), forState: .Disabled)
+        playButton = UIButton(type: .roundedRect)
+        playButton.frame = CGRect(x: 0, y: (videoView.bounds.size.height - 40) / 2, width: videoView.bounds.width, height: 40)
+        playButton.titleLabel?.textAlignment = .center
+        playButton.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
+        playButton.setTitle("Play Video", for: [])
+        playButton.setTitle("Playing videos requires access to the Internet.", for: .disabled)
+        playButton.setTitleColor(UIColor.white, for: .disabled)
 
-        playButton.addTarget(self, action: "startPlayer:", forControlEvents: .TouchUpInside)
+        playButton.addTarget(self, action: #selector(DetailViewController.startPlayer(_:)), for: .touchUpInside)
         videoView.addSubview(playButton)
 
         setupNetworkStatusMonitoring()
@@ -73,11 +85,7 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
         self.view = view
     }
 
-     override func shouldAutorotate() -> Bool {
-        return true
-    }
-
-    override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
+    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
         if player == nil { return }
         player.view!.frame = videoView.frame
     }
@@ -99,25 +107,25 @@ class DetailViewController: UIViewController, UISplitViewControllerDelegate, UIN
     }
 
     func setupNetworkStatusMonitoring() {
-        reachability = Reachability.reachabilityForInternetConnection()
+        reachability = Reachability.forInternetConnection()
 
         reachability!.reachableBlock = { (reach: Reachability?) -> Void in
             // this is called on a background thread, but UI updates must
             // be on the main thread, like this:
-            dispatch_async(dispatch_get_main_queue()) {
-                self.playButton.enabled = true
+            DispatchQueue.main.async {
+                self.playButton.isEnabled = true
             }
         }
 
         reachability!.unreachableBlock = { (reach: Reachability?) -> Void in
             // this is called on a background thread, but UI updates must
             // be on the main thread, like this:
-            dispatch_async(dispatch_get_main_queue()) {
-                self.playButton.enabled = false
+            DispatchQueue.main.async {
+                self.playButton.isEnabled = false
             }
         }
 
-        self.playButton.enabled = reachability?.currentReachabilityStatus() != .NotReachable
+        self.playButton.isEnabled = reachability?.currentReachabilityStatus() != .NotReachable
 
     }
 

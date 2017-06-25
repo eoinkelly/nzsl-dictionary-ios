@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:SQLite.swift/SQLite.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "container:NZSLDict.xcodeproj">
    </FileRef>
 </Workspace>

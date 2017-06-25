@@ -24,7 +24,7 @@ class ImageHelper {
         let numBytesToAllocate = numPixelsInSrcImage * 4 // 4 bytes per pixel: R,G,B,Alpha
 
         // Allocate memory for the new image data
-        let rawBytesPtr = allocateMemory(numBytes: numBytesToAllocate)
+        let rawBytesPtr = allocateMemory(numBytesToAllocate)
 
         // Create a bitmap-based graphics context and makes it the current context
         UIGraphicsBeginImageContext(src.size)
@@ -40,7 +40,7 @@ class ImageHelper {
         guard let bitcontext = CGContext(data: rawBytesPtr, width: srcWidthInt,
                                          height: srcHeightInt, bitsPerComponent: 8,
                                          bytesPerRow: srcWidthInt * 4, space: colorSpace, bitmapInfo: bitmapInfo) else {
-            cleanupMemory(ptr: rawBytesPtr, numBytes: numBytesToAllocate)
+            cleanupMemory(rawBytesPtr, numBytes: numBytesToAllocate)
             return src // TODO: clone the image
         }
 
@@ -61,7 +61,7 @@ class ImageHelper {
         // bitmap graphics context which we then wrap in an UIImage
         let resultImg = UIImage(cgImage: bitcontext.makeImage()!)
 
-        cleanupMemory(ptr: rawBytesPtr, numBytes: numBytesToAllocate)
+        cleanupMemory(rawBytesPtr, numBytes: numBytesToAllocate)
 
         // Removes the current bitmap-based graphics context from the top of the stack
         UIGraphicsEndImageContext()
@@ -71,7 +71,7 @@ class ImageHelper {
 
     // MARK: Private helper methods
 
-    static private func allocateMemory(numBytes: Int) -> UnsafeMutablePointer<UInt8> {
+    static fileprivate func allocateMemory(_ numBytes: Int) -> UnsafeMutablePointer<UInt8> {
         // Allocate the memory
         let bytesPtr = UnsafeMutablePointer<UInt8>.allocate(capacity: numBytes)
 
@@ -84,7 +84,7 @@ class ImageHelper {
         return bytesPtr
     }
 
-    static private func cleanupMemory(ptr: UnsafeMutablePointer<UInt8>, numBytes: Int) {
+    static fileprivate func cleanupMemory(_ ptr: UnsafeMutablePointer<UInt8>, numBytes: Int) {
         ptr.deinitialize()
         ptr.deallocate(capacity: numBytes)
     }

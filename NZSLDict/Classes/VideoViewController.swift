@@ -14,7 +14,10 @@ class VideoViewController: UIViewController, UISearchBarDelegate {
     override init(nibName nibNameOrNil: String!, bundle nibBundleOrNil: Bundle!) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         self.tabBarItem = UITabBarItem(title: "Video", image: UIImage(named: "movie"), tag: 0)
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoViewController.showEntry(_:)), name: NSNotification.Name(rawValue: EntrySelectedName), object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(VideoViewController.showEntry),
+                                               name: EntrySelectedName,
+                                               object: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -22,7 +25,7 @@ class VideoViewController: UIViewController, UISearchBarDelegate {
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
         reachability?.stopNotifier()
         reachability = nil
     }
@@ -31,8 +34,8 @@ class VideoViewController: UIViewController, UISearchBarDelegate {
         let view: UIView = UIView(frame: UIScreen.main.bounds)
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-        detailView = DetailView(frame: CGRectMake(0, 0, view.bounds.size.width, DetailView.height))
-        detailView.autoresizingMask = [.FlexibleWidth]
+        detailView = DetailView(frame: CGRect(x: 0, y: 0, width: view.bounds.size.width, height: DetailView.height))
+        detailView.autoresizingMask = [.flexibleWidth]
         view.addSubview(detailView)
         videoBack = UIView(frame: CGRect(x: 0, y: DetailView.height, width: view.bounds.size.width, height: view.bounds.size.height - DetailView.height))
         videoBack.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -40,13 +43,13 @@ class VideoViewController: UIViewController, UISearchBarDelegate {
 
         networkErrorMessage = UIView.init(frame: videoBack.frame)
         networkErrorMessage.autoresizingMask = detailView.autoresizingMask
-        networkErrorMessage.backgroundColor = UIColor.whiteColor()
-        let networkErrorMessageImage = UIImageView.init(frame: CGRectMake(0, 24, networkErrorMessage.frame.width, 72))
+        networkErrorMessage.backgroundColor = UIColor.white
+        let networkErrorMessageImage = UIImageView.init(frame: CGRect(x: 0, y: 24, width: networkErrorMessage.frame.width, height: 72))
         networkErrorMessageImage.image = UIImage.init(named: "ic_videocam_off")
-        networkErrorMessageImage.contentMode = .Center
+        networkErrorMessageImage.contentMode = .center
 
-        let networkErrorMessageText = UITextView.init(frame: CGRectMake(0, 24 + networkErrorMessageImage.frame.height, networkErrorMessage.frame.width, 100))
-        networkErrorMessageText.textAlignment = .Center
+        let networkErrorMessageText = UITextView.init(frame: CGRect(x: 0, y: 24 + networkErrorMessageImage.frame.height, width: networkErrorMessage.frame.width, height: 100))
+        networkErrorMessageText.textAlignment = .center
         networkErrorMessageText.text = "Playing videos requires access to the Internet."
 
         networkErrorMessage.addSubview(networkErrorMessageImage)
@@ -77,25 +80,24 @@ class VideoViewController: UIViewController, UISearchBarDelegate {
     }
 
     func setupNetworkStatusMonitoring() {
-        reachability = Reachability.reachabilityForInternetConnection()
+        reachability = Reachability.forInternetConnection()
 
 
         reachability!.reachableBlock = { (reach: Reachability?) -> Void in
             // this is called on a background thread, but UI updates must
             // be on the main thread, like this:
-            dispatch_async(dispatch_get_main_queue()) {
-                self.networkErrorMessage.hidden = true
-                self.videoBack.hidden = false
-
+            DispatchQueue.main.async {
+                self.networkErrorMessage.isHidden = true
+                self.videoBack.isHidden = false
             }
         }
 
         reachability!.unreachableBlock = { (reach: Reachability?) -> Void in
             // this is called on a background thread, but UI updates must
             // be on the main thread, like this:
-            dispatch_async(dispatch_get_main_queue()) {
-                self.networkErrorMessage.hidden = false
-                self.videoBack.hidden = true
+            DispatchQueue.main.async {
+                self.networkErrorMessage.isHidden = false
+                self.videoBack.isHidden = true
             }
         }
 
@@ -148,9 +150,9 @@ class VideoViewController: UIViewController, UISearchBarDelegate {
         guard let reason: MPMovieFinishReason = MPMovieFinishReason(rawValue: rawReason) else { return }
 
         switch reason {
-        case .PlaybackError:
-            networkErrorMessage.hidden = false
-            videoBack.hidden = true
+        case .playbackError:
+            networkErrorMessage.isHidden = false
+            videoBack.isHidden = true
         default: break
         }
     }

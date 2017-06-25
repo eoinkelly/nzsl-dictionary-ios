@@ -9,6 +9,7 @@
 import XCTest
 
 @testable import NZSLDict
+
 class SignsDictionaryTest: XCTestCase {
     var signsDictionary: SignsDictionary!;
     

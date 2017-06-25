@@ -1,5 +1,5 @@
 struct DictEntry: Equatable {
-    private static let LOCATION_IMAGES = [
+    fileprivate static let LOCATION_IMAGES = [
         "in front of body":  "location.1.1.in_front_of_body.png",
         "chest":             "location.4.12.chest.png",
         "lower head":        "location.3.9.lower_head.png",
