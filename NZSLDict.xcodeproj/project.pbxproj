@@ -168,9 +168,9 @@
 		0313E6D31EFB358F00FEDC67 /* Default-667h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-667h@2x.png"; sourceTree = "<group>"; };
 		03617D8A1EE8DA2400E26B34 /* PaddedUISearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaddedUISearchBar.swift; sourceTree = "<group>"; };
 		03884A2C1EEFC20300EF5412 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		03884A2E1EF0947D00EF5412 /* ic_videocam_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ic_videocam_off.png; path = "App Icons/ic_videocam_off.png"; sourceTree = "<group>"; };
-		03884A2F1EF0947D00EF5412 /* ic_videocam_off@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ic_videocam_off@2x.png"; path = "App Icons/ic_videocam_off@2x.png"; sourceTree = "<group>"; };
-		039081C81EEA3F800050C180 /* app-icon-transparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "app-icon-transparent.png"; path = "App Icons/app-icon-transparent.png"; sourceTree = "<group>"; };
+		03884A2E1EF0947D00EF5412 /* ic_videocam_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_videocam_off.png; sourceTree = "<group>"; };
+		03884A2F1EF0947D00EF5412 /* ic_videocam_off@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_videocam_off@2x.png"; sourceTree = "<group>"; };
+		039081C81EEA3F800050C180 /* app-icon-transparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-transparent.png"; sourceTree = "<group>"; };
 		039081CA1EEA4A2E0050C180 /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		03B1C88C1EE75B0E008A875C /* NZSLDictTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NZSLDictTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		03B1C8901EE75B0F008A875C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -191,9 +191,9 @@
 		37B3F29B1512F946005F45FA /* NZSLDict-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NZSLDict-Prefix.pch"; sourceTree = "<group>"; };
 		4911054A1C4642F600A742BE /* ViewControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerDelegate.swift; sourceTree = "<group>"; };
 		49342F971C481EB500C355B2 /* ViewControllerPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerPad.swift; sourceTree = "<group>"; };
-		49342F991C4821A800C355B2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		49342F991C4821A800C355B2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Classes/AppDelegate.swift; sourceTree = "<group>"; };
 		49342F9B1C483D4F00C355B2 /* HistoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
-		49342F9D1C484B5800C355B2 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		49342F9D1C484B5800C355B2 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = Classes/Constants.swift; sourceTree = "<group>"; };
 		49342FA31C48746900C355B2 /* DiagramView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiagramView.swift; sourceTree = "<group>"; };
 		49342FA51C48821200C355B2 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		49342FA71C488C7100C355B2 /* DiagramViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiagramViewController.swift; sourceTree = "<group>"; };
@@ -282,14 +282,10 @@
 		37B3F27E1512F946005F45FA = {
 			isa = PBXGroup;
 			children = (
-				03884A2E1EF0947D00EF5412 /* ic_videocam_off.png */,
-				03884A2F1EF0947D00EF5412 /* ic_videocam_off@2x.png */,
-				03EAA39C1EF0D52E001B3C6F /* Fonts */,
-				039081C81EEA3F800050C180 /* app-icon-transparent.png */,
 				49AFE04F1C28ED0D00462381 /* README.md */,
-				4960AD341C28E22E001037C4 /* App Icons */,
-				4960AD171C28E19C001037C4 /* Homescreen Icons */,
+				03EAA39C1EF0D52E001B3C6F /* Fonts */,
 				4960AD121C27AA53001037C4 /* Data */,
+				49D52DD51EFF7EC70067EB11 /* Icons */,
 				37B3F2931512F946005F45FA /* NZSLDict */,
 				03B1C88D1EE75B0F008A875C /* NZSLDictTests */,
 				37B3F28C1512F946005F45FA /* Frameworks */,
@@ -324,21 +320,18 @@
 		37B3F2931512F946005F45FA /* NZSLDict */ = {
 			isa = PBXGroup;
 			children = (
-				4960AD691C28E2A5001037C4 /* Classes */,
-				37B3F2941512F946005F45FA /* Supporting Files */,
-			);
-			path = NZSLDict;
-			sourceTree = "<group>";
-		};
-		37B3F2941512F946005F45FA /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
+				49D52DD11EFF7D620067EB11 /* Models */,
+				49D52DD31EFF7D930067EB11 /* Views */,
+				49D52DD21EFF7D810067EB11 /* ViewControllers */,
+				49342F991C4821A800C355B2 /* AppDelegate.swift */,
 				37B3F2951512F946005F45FA /* NZSLDict-Info.plist */,
 				37B3F2961512F946005F45FA /* InfoPlist.strings */,
 				37B3F29B1512F946005F45FA /* NZSLDict-Prefix.pch */,
 				37B3112615199CAC005F45FA /* about.html */,
+				49342F9D1C484B5800C355B2 /* Constants.swift */,
+				49D52DD41EFF7DB60067EB11 /* Services */,
 			);
-			name = "Supporting Files";
+			path = NZSLDict;
 			sourceTree = "<group>";
 		};
 		4960AD171C28E19C001037C4 /* Homescreen Icons */ = {
@@ -365,7 +358,10 @@
 				4960AD351C28E22E001037C4 /* app-icon-114.png */,
 				4960AD361C28E22E001037C4 /* app-icon-120.png */,
 				4960AD371C28E22E001037C4 /* app-icon-144.png */,
+				039081C81EEA3F800050C180 /* app-icon-transparent.png */,
 				4960AD381C28E22E001037C4 /* app-icon-152.png */,
+				03884A2E1EF0947D00EF5412 /* ic_videocam_off.png */,
+				03884A2F1EF0947D00EF5412 /* ic_videocam_off@2x.png */,
 				4960AD391C28E22E001037C4 /* app-icon-72.png */,
 				4960AD3A1C28E22E001037C4 /* app-icon-76.png */,
 				4960AD3B1C28E22E001037C4 /* app-icon.png */,
@@ -392,34 +388,6 @@
 			path = "App Icons";
 			sourceTree = "<group>";
 		};
-		4960AD691C28E2A5001037C4 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				03C248B81EF1E4BE00569CE0 /* Reachability.h */,
-				03C248B91EF1E4BE00569CE0 /* Reachability.m */,
-				039081CA1EEA4A2E0050C180 /* AboutViewController.swift */,
-				499DFD911C3F4FE100F45D0E /* DetailView.swift */,
-				4969EAF61C462A69002032B7 /* ViewControllerPhone.swift */,
-				4911054A1C4642F600A742BE /* ViewControllerDelegate.swift */,
-				49342F971C481EB500C355B2 /* ViewControllerPad.swift */,
-				49342F991C4821A800C355B2 /* AppDelegate.swift */,
-				49342F9B1C483D4F00C355B2 /* HistoryViewController.swift */,
-				49342F9D1C484B5800C355B2 /* Constants.swift */,
-				49342FA31C48746900C355B2 /* DiagramView.swift */,
-				49342FA51C48821200C355B2 /* DetailViewController.swift */,
-				49342FA71C488C7100C355B2 /* DiagramViewController.swift */,
-				49342FAB1C489B9800C355B2 /* SearchViewControllerDelegate.swift */,
-				49342FA91C4890CF00C355B2 /* SearchViewController.swift */,
-				49BD49ED1C6FC42000124A16 /* VideoViewController.swift */,
-				49665FE31EEE20BF00D56001 /* SignsDictionary.swift */,
-				49665FE51EEE221900D56001 /* DictEntry.swift */,
-				499DFD8C1C3F483A00F45D0E /* NZSLDict-Bridging-Header.h */,
-				03617D8A1EE8DA2400E26B34 /* PaddedUISearchBar.swift */,
-				49665FDE1EEDD8A200D56001 /* ImageHelper.swift */,
-			);
-			path = Classes;
-			sourceTree = "<group>";
-		};
 		49D52DB41EFF37EC0067EB11 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -432,6 +400,66 @@
 				49D52DCA1EFF37ED0067EB11 /* SQLite.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		49D52DD11EFF7D620067EB11 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				49665FE31EEE20BF00D56001 /* SignsDictionary.swift */,
+				49665FE51EEE221900D56001 /* DictEntry.swift */,
+			);
+			name = Models;
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		49D52DD21EFF7D810067EB11 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				039081CA1EEA4A2E0050C180 /* AboutViewController.swift */,
+				499DFD911C3F4FE100F45D0E /* DetailView.swift */,
+				4969EAF61C462A69002032B7 /* ViewControllerPhone.swift */,
+				4911054A1C4642F600A742BE /* ViewControllerDelegate.swift */,
+				49342F971C481EB500C355B2 /* ViewControllerPad.swift */,
+				49342F9B1C483D4F00C355B2 /* HistoryViewController.swift */,
+				49342FA51C48821200C355B2 /* DetailViewController.swift */,
+				49342FA71C488C7100C355B2 /* DiagramViewController.swift */,
+				49342FAB1C489B9800C355B2 /* SearchViewControllerDelegate.swift */,
+				49342FA91C4890CF00C355B2 /* SearchViewController.swift */,
+				49BD49ED1C6FC42000124A16 /* VideoViewController.swift */,
+			);
+			name = ViewControllers;
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		49D52DD31EFF7D930067EB11 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				49342FA31C48746900C355B2 /* DiagramView.swift */,
+				03617D8A1EE8DA2400E26B34 /* PaddedUISearchBar.swift */,
+			);
+			name = Views;
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		49D52DD41EFF7DB60067EB11 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				49665FDE1EEDD8A200D56001 /* ImageHelper.swift */,
+				499DFD8C1C3F483A00F45D0E /* NZSLDict-Bridging-Header.h */,
+				03C248B81EF1E4BE00569CE0 /* Reachability.h */,
+				03C248B91EF1E4BE00569CE0 /* Reachability.m */,
+			);
+			name = Services;
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		49D52DD51EFF7EC70067EB11 /* Icons */ = {
+			isa = PBXGroup;
+			children = (
+				4960AD171C28E19C001037C4 /* Homescreen Icons */,
+				4960AD341C28E22E001037C4 /* App Icons */,
+			);
+			name = Icons;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
